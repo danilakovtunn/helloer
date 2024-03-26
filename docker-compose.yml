@@ -1,0 +1,26 @@
+version: "3"
+services:
+  postgres:
+    image: postgres:16.0-alpine
+    networks:
+      new:
+        aliases:
+          - database
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespw
+      POSTGRES_DB: helloer
+    ports:
+      - "127.0.0.1:5432:5432"
+  app:
+    image: helloer
+    networks:
+      - new
+    depends_on:
+      - postgres
+    links:
+      - postgres
+    ports:
+      - "127.0.0.1:8080:8080"
+networks:
+  new:
