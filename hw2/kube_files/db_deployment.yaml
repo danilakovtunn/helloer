@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service: database
+  name: database
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: database
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        network/hw-2-default: "true"
+        service: database
+    spec:
+      containers:
+        - env:
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: postgrespw
+            - name: POSTGRES_DB
+              value: helloer
+          image: dkovtunn/helloer_db
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - pg_isready -h 127.0.0.1 -p 5432
+            failureThreshold: 10
+            timeoutSeconds: 20
+          name: database
+          ports:
+            - containerPort: 5432
+              hostPort: 5432
+      restartPolicy: Always
+      volumes:
+        - name: db-data
+          persistentVolumeClaim:
+            claimName: db-data

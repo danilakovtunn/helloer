@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service: helloer
+  name: helloer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: helloer
+  template:
+    metadata:
+      labels:
+        network/hw-2-default: "true"
+        service: helloer
+    spec:
+      containers:
+        - image: dkovtunn/helloer
+          name: helloer
+          ports:
+            - containerPort: 8080
+              hostPort: 8080
+      restartPolicy: Always
